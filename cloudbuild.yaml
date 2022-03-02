@@ -1,1 +1,37 @@
+timeout: 1200s
+substitutions:
+  _CUSTOM_REGION: europe-west1-b
+  _CUSTOM_CLUSTER: peers-cluster 
+steps:
+  - name: bash
+    id: Download helm chart
+    args:
+      - curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-375.0.0-linux-x86_64.tar.gz
+      - tar -xvf google-cloud-sdk-375.0.0-linux-x86_64.tar.gz && cd google-cloud-sdk/bin
+      - gsutil cp gs://peers-helm-repo/authentication/charts-0.1.0.tgz .
 
+  - name: gcr.io/cloud-builders/kubectl
+    id: Configure kubectl
+    args:
+      - cluster-info
+    env:
+      - CLOUDSDK_COMPUTE_REGION=$_CUSTOM_REGION
+      - CLOUDSDK_CONTAINER_CLUSTER=$_CUSTOM_CLUSTER
+      - KUBECONFIG=/workspace/.kube/config
+
+  - name: gcr.io/peers-329109/helm:latest
+    id: Deploy chart
+    args:
+      - upgrade
+      - authentication
+      - ./charts-0.1.0.tgz
+      - --set image.tag=v0.0.8
+    env:
+      - KUBECONFIG=/workspace/.kube/config
+      - TILLERLESS=true
+
+  - name: bash
+    id: Clean workspace
+    args: 
+      - rm google-cloud-sdk-375.0.0-linux-x86_64.tar.gz
+      - rm -R google-cloud-sdk
