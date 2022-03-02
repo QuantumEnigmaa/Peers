@@ -27,3 +27,5 @@ steps:
     env:
       - KUBECONFIG=/workspace/.kube/config
       - TILLERLESS=true
+options:
+ logging: CLOUD_LOGGING_ONLY
