@@ -6,7 +6,9 @@ steps:
   - name: gcr.io/cloud-builders/gsutil
     id: Download helm chart
     args:
-      - gsutil cp gs://peers-helm-repo/authentication/charts-0.1.0.tgz .
+      - cp 
+      - gs://peers-helm-repo/authentication/charts-0.1.0.tgz 
+      - .
 
   - name: gcr.io/cloud-builders/kubectl
     id: Configure kubectl
