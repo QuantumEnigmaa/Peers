@@ -4,10 +4,44 @@ substitutions:
   _CUSTOM_CLUSTER: peers-cluster 
 steps:
   - name: gcr.io/cloud-builders/gsutil
-    id: Download helm chart
+    id: Download authent helm chart
     args:
       - cp 
       - gs://peers-helm-repo/authentication/authentication.tgz 
+      - .
+  
+  - name: gcr.io/cloud-builders/gsutil
+    id: Download chatroom helm chart
+    args:
+      - cp 
+      - gs://peers-helm-repo/chatroom_server/chatroom.tgz 
+      - .
+  - name: gcr.io/cloud-builders/gsutil
+    id: Download contact helm chart
+    args:
+      - cp 
+      - gs://peers-helm-repo/contact_manager/contact.tgz 
+      - .
+  
+  - name: gcr.io/cloud-builders/gsutil
+    id: Download messaging helm chart
+    args:
+      - cp 
+      - gs://peers-helm-repo/messaging-server/messaging.tgz 
+      - .
+  
+  - name: gcr.io/cloud-builders/gsutil
+    id: Download reverse helm chart
+    args:
+      - cp 
+      - gs://peers-helm-repo/reverse_proxy/reverse.tgz 
+      - .
+  
+  - name: gcr.io/cloud-builders/gsutil
+    id: Download webserver helm chart
+    args:
+      - cp 
+      - gs://peers-helm-repo/web-server/webserver.tgz 
       - .
 
   - name: gcr.io/cloud-builders/kubectl
@@ -20,11 +54,61 @@ steps:
       - KUBECONFIG=/workspace/.kube/config
 
   - name: gcr.io/peers-329109/helm:latest
-    id: Deploy chart
+    id: Deploy authent chart
     args:
       - upgrade
       - authentication
       - authentication.tgz
+    env:
+      - KUBECONFIG=/workspace/.kube/config
+      - TILLERLESS=true
+  
+  - name: gcr.io/peers-329109/helm:latest
+    id: Deploy chatroom chart
+    args:
+      - upgrade
+      - chatroom-server
+      - chatroom.tgz
+    env:
+      - KUBECONFIG=/workspace/.kube/config
+      - TILLERLESS=true
+  
+  - name: gcr.io/peers-329109/helm:latest
+    id: Deploy contact chart
+    args:
+      - upgrade
+      - contact-manager
+      - contact.tgz
+    env:
+      - KUBECONFIG=/workspace/.kube/config
+      - TILLERLESS=true
+  
+  - name: gcr.io/peers-329109/helm:latest
+    id: Deploy messaging chart
+    args:
+      - upgrade
+      - messaging-server
+      - messaging.tgz
+    env:
+      - KUBECONFIG=/workspace/.kube/config
+      - TILLERLESS=true
+      
+  - name: gcr.io/peers-329109/helm:latest
+    id: Deploy reverse chart
+    args:
+      - upgrade
+      - reverse-proxy
+      - reverse.tgz
+    env:
+      - KUBECONFIG=/workspace/.kube/config
+      - TILLERLESS=true
+      
+  - name: gcr.io/peers-329109/helm:latest
+    id: Deploy webserver chart
+    args:
+      - upgrade
+      - web-server
+      - webserver.tgz
     env:
       - KUBECONFIG=/workspace/.kube/config
       - TILLERLESS=true
