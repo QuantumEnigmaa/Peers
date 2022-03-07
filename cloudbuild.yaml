@@ -7,7 +7,7 @@ steps:
     id: Download helm chart
     args:
       - cp 
-      - gs://peers-helm-repo/authentication/authentication-0.1.0.tgz 
+      - gs://peers-helm-repo/authentication/authentication.tgz 
       - .
 
   - name: gcr.io/cloud-builders/kubectl
@@ -24,9 +24,7 @@ steps:
     args:
       - upgrade
       - authentication
-      - authentication-0.1.0.tgz
-      - --set 
-      - image.tag=3.0.0
+      - authentication.tgz
     env:
       - KUBECONFIG=/workspace/.kube/config
       - TILLERLESS=true
